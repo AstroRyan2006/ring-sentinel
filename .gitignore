@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+sentinel.db
+capture_intrusion.jpg
+capture_flux.jpg
+*.jpg
+*.jpeg
+*.png
