@@ -12,5 +12,27 @@ Ring Sentinel integrates biometric edge intelligence with the Ring developer eco
 
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/](https://github.com/)AstroRyan2006/ring-sentinel.git
+   git clone https://github.com/AstroRyan2006/ring-sentinel.git
    cd ring-sentinel
+   ```
+   
+2. **Set up the virtual environment:**
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
+   ```
+   
+3. **Configure environment variables:**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your ntfy topic and Ring credentials
+   ```
+
+4. **Initialize database & register trusted faces:**
+   Place reference portraits in the project root and populate sentinel.db
+
+5. **Run Ring Sentinel:**
+   ```bash
+   python main.py
+   ```
