@@ -2,10 +2,15 @@ import os
 import sqlite3
 import time
 import cv2
+from dotenv import load_dotenv
 import face_recognition
 import requests
+from ring_client import RingSentinelClient
 
-CANAL = "ring-sentinel-rayen-2026"
+# Chargement des variables d'environnement (.env)
+load_dotenv()
+
+CANAL = os.getenv("NTFY_TOPIC", "ring-sentinel-rayen-2026")
 URL_NTFY = f"https://ntfy.sh/{CANAL}"
 DB_FILE = "sentinel.db"
 
@@ -28,7 +33,9 @@ def initialiser_bdd():
 def recuperer_personnes():
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    cursor.execute("SELECT nom, role, photo_ref FROM personnes_autorisees")
+    cursor.execute(
+        "SELECT nom, role, photo_ref FROM personnes_autorisees"
+    )
     lignes = cursor.fetchall()
     conn.close()
     return lignes
@@ -64,6 +71,11 @@ def envoyer_alerte_inconnu(chemin_capture: str):
 
 
 def lancer_flux_webcam():
+    # 1. Validation de l'environnement Ring Developer
+    client_ring = RingSentinelClient()
+    client_ring.verifier_session_ring()
+
+    # 2. Base de données et chargement biométrique
     initialiser_bdd()
     personnes = recuperer_personnes()
 
@@ -87,7 +99,9 @@ def lancer_flux_webcam():
         )
         return
 
-    print("\n[Ring Sentinel] Surveillance active. Appuie sur 'q' pour quitter.")
+    print(
+        "\n[Ring Sentinel] Surveillance active. Appuie sur 'q' pour quitter."
+    )
 
     derniere_alerte = 0
     COOLDOWN_SECONDES = 10
@@ -103,12 +117,15 @@ def lancer_flux_webcam():
 
         # Analyse 1 image sur 4 pour conserver une bonne fluidite
         if frame_count % 4 == 0:
-            # Redimensionnement a 50 % pour accelerer le calcul
             small_frame = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
-            rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
+            rgb_small_frame = cv2.cvtColor(
+                small_frame, cv2.COLOR_BGR2RGB
+            )
 
             locs = face_recognition.face_locations(rgb_small_frame)
-            encs = face_recognition.face_encodings(rgb_small_frame, locs)
+            encs = face_recognition.face_encodings(
+                rgb_small_frame, locs
+            )
 
             for (top, right, bottom, left), enc in zip(locs, encs):
                 nom_affiche = "Inconnu"
@@ -131,7 +148,9 @@ def lancer_flux_webcam():
                 left *= 2
 
                 # Dessin du cadre et du label
-                cv2.rectangle(frame, (left, top), (right, bottom), couleur, 2)
+                cv2.rectangle(
+                    frame, (left, top), (right, bottom), couleur, 2
+                )
                 cv2.rectangle(
                     frame,
                     (left, bottom - 30),
