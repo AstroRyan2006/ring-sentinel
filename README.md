@@ -12,5 +12,5 @@ Ring Sentinel integrates biometric edge intelligence with the Ring developer eco
 
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/](https://github.com/)<your-username>/ring-sentinel.git
+   git clone [https://github.com/](https://github.com/)AstroRyan2006/ring-sentinel.git
    cd ring-sentinel
