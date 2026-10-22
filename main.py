@@ -165,7 +165,7 @@ def lancer_flux_webcam():
                     role_identifie = None
 
                     if encodages_connus:
-                        matches = face_recognition.compare_faces(encodages_connus, enc, tolerance=0.52)
+                        matches = face_recognition.compare_faces(encodages_connus, enc, tolerance=0.58)
                         if True in matches:
                             index = matches.index(True)
                             nom_identifie, role_identifie = donnees_connues[index]
